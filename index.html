@@ -81,23 +81,26 @@
             .print-only { display: block !important; }
             body {
                 background-color: #ffffff !important;
+                padding-bottom: 0 !important;
+                font-size: 16px !important;
+            }
             /* 強制手冊內所有敘述與清單字體至少為 16px，行程區塊更放大至 17px */
             main p, main li, main span, main div.text-sm, main div.text-xs, main p.text-sm, main p.text-xs, main li.text-sm {
-                font-size: 16.5px !important;
-                line-height: 1.65 !important;
+                font-size: 16px !important;
+                line-height: 1.55 !important;
             }
             #sec-overview p, #sec-overview span, #sec-daily p, #sec-daily span, #sec-daily div.text-base, #sec-daily div.text-sm {
-                font-size: 17px !important;
-                line-height: 1.65 !important;
+                font-size: 16.5px !important;
+                line-height: 1.58 !important;
             }
             main h2 {
-                font-size: 22px !important;
+                font-size: 21px !important;
             }
             main h3 {
-                font-size: 20px !important;
+                font-size: 19px !important;
             }
             main h4 {
-                font-size: 18px !important;
+                font-size: 17.5px !important;
             }
             main {
                 margin-top: 0 !important;
@@ -112,7 +115,7 @@
             button, #currency-calculator-box {
                 display: none !important;
             }
-            /* 強制分頁控制（共 12 頁 = 4 的倍數） */
+            /* 強制分頁控制（精準規劃為 12 頁 = 4 的倍數） */
             .print-break-before {
                 page-break-before: always !important;
                 break-before: page !important;
@@ -121,51 +124,71 @@
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
-            /* 第 1 頁封面與航班住宿緊湊排版，確保穩穩落在同一頁 */
+            /* 第 1 頁封面與航班住宿緊湊排版，確保穩穩落在同一頁不留白 */
             header.hero-gradient {
                 background-color: #0f766e !important;
                 background-image: linear-gradient(135deg, #0f766e 0%, #115e59 50%, #134e4a 100%) !important;
                 color: #ffffff !important;
-                border-radius: 16px !important;
-                padding: 14px 18px !important;
-                margin-bottom: 10px !important;
+                border-radius: 14px !important;
+                padding: 12px 16px !important;
+                margin-bottom: 8px !important;
                 box-shadow: none !important;
             }
             header h1 {
-                font-size: 24px !important;
-                margin-bottom: 4px !important;
+                font-size: 22px !important;
+                margin-bottom: 2px !important;
             }
             header .mb-6 {
-                margin-bottom: 10px !important;
+                margin-bottom: 8px !important;
+            }
+            header .p-4 {
+                padding: 8px 12px !important;
             }
             .card-shadow {
                 box-shadow: none !important;
                 border: 1px solid #cbd5e1 !important;
-                padding: 14px 16px !important;
+                padding: 12px 15px !important;
                 border-radius: 14px !important;
             }
             #sec-flight-hotel .card-shadow {
-                padding: 12px 15px !important;
-            }
-            #sec-flight-hotel h2 {
-                margin-bottom: 8px !important;
-            }
-            #sec-flight-hotel .mb-5 {
-                margin-bottom: 10px !important;
                 padding: 10px 14px !important;
             }
-            #sec-flight-hotel .p-4 {
-                padding: 10px 12px !important;
+            #sec-flight-hotel h2 {
+                margin-bottom: 6px !important;
             }
-            #sec-flight-hotel .mt-4 {
-                margin-top: 8px !important;
+            #sec-flight-hotel .mb-5 {
+                margin-bottom: 8px !important;
                 padding: 8px 12px !important;
             }
+            #sec-flight-hotel .grid.md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+            #sec-flight-hotel .p-4 {
+                padding: 8px 12px !important;
+            }
+            #sec-flight-hotel .mt-4 {
+                margin-top: 6px !important;
+                padding: 6px 10px !important;
+            }
+            /* 第 2 頁五日行程大綱緊湊排版，避免最後一行註解單獨跨頁 */
+            #sec-overview .card-shadow {
+                padding: 12px 14px !important;
+            }
+            #sec-overview .p-4, #sec-overview .sm\:p-5 {
+                padding: 9px 12px !important;
+            }
+            #sec-overview .space-y-5 > * + * {
+                margin-top: 8px !important;
+            }
+            /* 注意事項卡片緊密銜接、不留大段空白 */
+            #sec-tips .p-6, #sec-tips .sm\:p-7, #sec-currency .p-6 {
+                padding: 12px 16px !important;
+            }
             .print-compact-gap {
-                gap: 10px !important;
+                gap: 8px !important;
             }
             .print-compact-space > * + * {
-                margin-top: 10px !important;
+                margin-top: 8px !important;
             }
         }
     </style>
@@ -694,10 +717,10 @@
                 </div>
             </div>
 
-            <!-- 重要規定與貼心叮嚀卡片群 -->
+            <!-- 重要規定與貼心叮嚀卡片群（自然緊密排列、不強制換頁造成大空白） -->
             <div class="grid grid-cols-1 gap-5 print-compact-gap">
-                <!-- 簽證與照片 (列印第 9 頁) -->
-                <div class="bg-white rounded-3xl p-6 sm:p-7 card-shadow border border-slate-100 print-break-before print-avoid-break">
+                <!-- 簽證與照片 -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 card-shadow border border-slate-100 print-avoid-break">
                     <h3 class="font-bold text-slate-800 text-lg sm:text-xl mb-3 flex items-center gap-2.5">
                         <span class="text-2xl">📕</span> 簽證與證件照片提醒
                     </h3>
@@ -731,8 +754,8 @@
                     </ul>
                 </div>
 
-                <!-- 天氣電壓與乘車 (列印第 10 頁) -->
-                <div class="bg-white rounded-3xl p-6 sm:p-7 card-shadow border border-slate-100 print-break-before print-avoid-break">
+                <!-- 天氣電壓與乘車 -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 card-shadow border border-slate-100 print-avoid-break">
                     <h3 class="font-bold text-slate-800 text-lg sm:text-xl mb-3 flex items-center gap-2.5">
                         <span class="text-2xl">🔌</span> 電壓、衣著與乘車提醒
                     </h3>
@@ -822,8 +845,8 @@
                 </div>
             </div>
 
-            <!-- 換匯與小費說明卡片 (列印第 11 頁：兩張卡片同頁不留白) -->
-            <div class="grid grid-cols-1 gap-5 print-break-before print-compact-gap">
+            <!-- 換匯與小費說明卡片（緊接注意事項後方自然排版，避免半頁大空白） -->
+            <div class="grid grid-cols-1 gap-5 print-compact-gap">
                 <!-- 換匯與現金 -->
                 <div class="bg-white rounded-3xl p-6 card-shadow border border-slate-100 print-avoid-break">
                     <h3 class="font-bold text-slate-800 text-lg sm:text-xl mb-3 flex items-center gap-2">
