@@ -56,11 +56,75 @@
         .card-shadow {
             box-shadow: 0 4px 20px -2px rgba(15, 118, 110, 0.08);
         }
-        /* 列印樣式優化 */
+        /* 列印樣式優化：內文字體統一 16px，精準規劃為 12 頁（4 的倍數，適合雙面列印/騎馬釘小冊子） */
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 12mm 14mm;
+            }
             .no-print { display: none !important; }
-            body { background-color: white; padding-bottom: 0 !important; }
-            section { display: block !important; margin-bottom: 2rem; }
+            .print-only { display: block !important; }
+            .print-flex { display: flex !important; }
+            body {
+                background-color: white !important;
+                padding-bottom: 0 !important;
+                font-size: 16px !important;
+                line-height: 1.6 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            /* 強制手冊內所有敘述與清單字體至少為 16px */
+            main p, main li, main span, main div.text-sm, main div.text-xs, main p.text-sm, main p.text-xs, main li.text-sm {
+                font-size: 16px !important;
+                line-height: 1.6 !important;
+            }
+            main h2 {
+                font-size: 21px !important;
+            }
+            main h3 {
+                font-size: 19px !important;
+            }
+            main h4 {
+                font-size: 17px !important;
+            }
+            main {
+                margin-top: 0 !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+            section, .day-card {
+                display: block !important;
+            }
+            /* 隱藏互動按鈕與不需列印的匯率計算機 */
+            button, #currency-calculator-box {
+                display: none !important;
+            }
+            /* 強制分頁控制（共 12 頁 = 4 的倍數） */
+            .print-break-before {
+                page-break-before: always !important;
+                break-before: page !important;
+            }
+            .print-avoid-break {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            header {
+                border-radius: 18px !important;
+                padding: 20px 22px !important;
+                margin-bottom: 16px !important;
+            }
+            .card-shadow {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+                padding: 18px 20px !important;
+                border-radius: 16px !important;
+            }
+            .print-compact-gap {
+                gap: 14px !important;
+            }
+            .print-compact-space > * + * {
+                margin-top: 14px !important;
+            }
         }
     </style>
 </head>
@@ -77,9 +141,14 @@
                 <span class="bg-amber-400/20 text-amber-200 border border-amber-300/30 text-xs font-semibold px-3 py-1 rounded-full">
                     <i class="fa-solid fa-crown mr-1"></i> 郵輪尊榮版｜山富旅遊
                 </span>
-                <span class="text-teal-100 text-xs bg-black/20 px-3 py-1 rounded-full">
-                    團號：HAN05261213Q
-                </span>
+                <div class="flex items-center gap-2">
+                    <span class="text-teal-100 text-xs bg-black/20 px-3 py-1 rounded-full">
+                        團號：HAN05261213Q
+                    </span>
+                    <button onclick="printHandout()" class="no-print bg-white text-teal-900 hover:bg-amber-300 font-bold text-xs px-3.5 py-1.5 rounded-full shadow transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-print"></i> 列印手冊 (12頁)
+                    </button>
+                </div>
             </div>
 
             <h1 class="text-2xl sm:text-4xl font-bold tracking-tight mb-2">
@@ -116,10 +185,10 @@
     <!-- 主內容區 -->
     <main class="max-w-4xl mx-auto px-4 sm:px-6 -mt-6 relative z-20 space-y-6">
 
-        <!-- ==================== 分頁 1：航班與飯店資訊 ==================== -->
-        <section id="sec-flight-hotel" class="space-y-6">
+        <!-- ==================== 分頁 1：航班與飯店資訊 (列印第 1 頁) ==================== -->
+        <section id="sec-flight-hotel" class="space-y-6 print-compact-space">
             <!-- 集合與航班 -->
-            <div class="bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100">
+            <div class="bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 print-avoid-break">
                 <h2 class="text-xl font-bold text-teal-800 flex items-center gap-2 mb-4">
                     <span class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center"><i class="fa-solid fa-plane"></i></span>
                     集合與航班資訊
@@ -137,7 +206,7 @@
                 </div>
 
                 <!-- 航班卡片 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 print-compact-gap">
                     <!-- 去程 -->
                     <div class="border border-slate-200 rounded-2xl p-4 bg-slate-50/50 relative overflow-hidden">
                         <div class="flex justify-between items-center mb-3">
@@ -189,13 +258,13 @@
             </div>
 
             <!-- 飯店資訊 -->
-            <div class="bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100">
+            <div class="bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 print-avoid-break">
                 <h2 class="text-xl font-bold text-teal-800 flex items-center gap-2 mb-4">
                     <span class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center"><i class="fa-solid fa-hotel"></i></span>
                     住宿飯店資訊
                 </h2>
 
-                <div class="space-y-4">
+                <div class="space-y-4 print-compact-space">
                     <!-- 飯店 1 -->
                     <div class="border border-slate-200 rounded-2xl p-4 hover:border-teal-400 transition">
                         <div class="flex flex-wrap justify-between items-start gap-2 mb-2">
@@ -242,28 +311,28 @@
             </div>
         </section>
 
-        <!-- ==================== 分頁 2：五日行程大綱 ==================== -->
-        <section id="sec-overview" class="hidden space-y-4">
+        <!-- ==================== 分頁 2：五日行程大綱 (列印第 2 頁) ==================== -->
+        <section id="sec-overview" class="hidden space-y-4 print-break-before print-avoid-break">
             <div class="bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-teal-800 flex items-center gap-2">
                         <span class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center"><i class="fa-solid fa-route"></i></span>
-                        五日行程總覽（點擊可直接看當天詳情）
+                        五日行程總覽<span class="no-print text-sm font-normal text-slate-500">（點擊可直接看當天詳情）</span>
                     </h2>
                 </div>
 
                 <!-- 時間軸卡片 -->
-                <div class="relative border-l-2 border-teal-200 ml-3 sm:ml-4 space-y-5 py-2">
+                <div class="relative border-l-2 border-teal-200 ml-3 sm:ml-4 space-y-5 py-2 print-compact-space">
                     <!-- Day 1 -->
                     <div onclick="goToDay(1)" class="relative pl-6 cursor-pointer group">
                         <span class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-teal-600 ring-4 ring-teal-50 group-hover:scale-125 transition"></span>
                         <div class="bg-slate-50 group-hover:bg-teal-50/60 border border-slate-200 group-hover:border-teal-300 rounded-2xl p-4 transition">
                             <div class="flex flex-wrap justify-between items-center gap-1 mb-1">
                                 <span class="font-bold text-teal-800">DAY 1｜12/13 (日) 抵達河內・古城巡禮</span>
-                                <span class="text-xs text-teal-600 font-medium">查看詳情 <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                <span class="no-print text-xs text-teal-600 font-medium">查看詳情 <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
                             </div>
                             <p class="text-sm text-slate-700 font-medium">高雄小港 ➔ 河內機場 ➔ 文廟國子監 ➔ 聖若瑟百年大教堂 ➔ 還劍湖 ➔ 電瓶車遊三十六古街</p>
-                            <p class="text-xs text-slate-500 mt-2"><i class="fa-solid fa-bed mr-1"></i> 宿：Somerset Hoa Binh Hanoi</p>
+                            <p class="text-xs text-slate-500 mt-1.5"><i class="fa-solid fa-bed mr-1"></i> 宿：Somerset Hoa Binh Hanoi</p>
                         </div>
                     </div>
 
@@ -273,10 +342,10 @@
                         <div class="bg-slate-50 group-hover:bg-teal-50/60 border border-slate-200 group-hover:border-teal-300 rounded-2xl p-4 transition">
                             <div class="flex flex-wrap justify-between items-center gap-1 mb-1">
                                 <span class="font-bold text-teal-800">DAY 2｜12/14 (一) 陸龍灣輕舟秘境</span>
-                                <span class="text-xs text-teal-600 font-medium">查看詳情 <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                <span class="no-print text-xs text-teal-600 font-medium">查看詳情 <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
                             </div>
                             <p class="text-sm text-slate-700 font-medium">河內 ➔ 寧平陸龍灣 ➔ 長安生態保護區輕舟探秘（2小時）➔ 寧平碧洞古廟 ➔ 返回河內</p>
-                            <p class="text-xs text-slate-500 mt-2"><i class="fa-solid fa-bed mr-1"></i> 宿：Somerset Hoa Binh Hanoi</p>
+                            <p class="text-xs text-slate-500 mt-1.5"><i class="fa-solid fa-bed mr-1"></i> 宿：Somerset Hoa Binh Hanoi</p>
                         </div>
                     </div>
 
@@ -286,10 +355,10 @@
                         <div class="bg-slate-50 group-hover:bg-teal-50/60 border border-slate-200 group-hover:border-teal-300 rounded-2xl p-4 transition">
                             <div class="flex flex-wrap justify-between items-center gap-1 mb-1">
                                 <span class="font-bold text-teal-800">DAY 3｜12/15 (二) 河內古蹟與國寶木偶戲</span>
-                                <span class="text-xs text-teal-600 font-medium">查看詳情 <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                <span class="no-print text-xs text-teal-600 font-medium">查看詳情 <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
                             </div>
                             <p class="text-sm text-slate-700 font-medium">巴亭廣場・總督府・一柱廟・玉山祠 ➔ 品嘗網紅雞蛋咖啡 ➔ 前往下龍灣 ➔ 越南水上木偶戲</p>
-                            <p class="text-xs text-slate-500 mt-2"><i class="fa-solid fa-bed mr-1"></i> 宿：The Watson Premium Halong Hotel</p>
+                            <p class="text-xs text-slate-500 mt-1.5"><i class="fa-solid fa-bed mr-1"></i> 宿：The Watson Premium Halong Hotel</p>
                         </div>
                     </div>
 
@@ -299,10 +368,10 @@
                         <div class="bg-amber-50/50 group-hover:bg-amber-50 border border-amber-200 group-hover:border-amber-400 rounded-2xl p-4 transition">
                             <div class="flex flex-wrap justify-between items-center gap-1 mb-1">
                                 <span class="font-bold text-amber-900">DAY 4｜12/16 (三) 五星總統號郵輪・雙層纜車</span>
-                                <span class="text-xs text-amber-700 font-medium">查看詳情 <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                <span class="no-print text-xs text-amber-700 font-medium">查看詳情 <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
                             </div>
                             <p class="text-sm text-slate-800 font-medium">五星級【亞特圖斯總統號】出海 ➔ 驚訝洞・穿洞・英雄島 TI TOP ➔ 女皇雙層纜車＋網紅日本花園</p>
-                            <p class="text-xs text-slate-600 mt-2"><i class="fa-solid fa-bed mr-1"></i> 宿：The Watson Premium Halong Hotel</p>
+                            <p class="text-xs text-slate-600 mt-1.5"><i class="fa-solid fa-bed mr-1"></i> 宿：The Watson Premium Halong Hotel</p>
                         </div>
                     </div>
 
@@ -312,15 +381,15 @@
                         <div class="bg-slate-50 group-hover:bg-teal-50/60 border border-slate-200 group-hover:border-teal-300 rounded-2xl p-4 transition">
                             <div class="flex flex-wrap justify-between items-center gap-1 mb-1">
                                 <span class="font-bold text-teal-800">DAY 5｜12/17 (四) 西湖古寺・滿載而歸</span>
-                                <span class="text-xs text-teal-600 font-medium">查看詳情 <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                <span class="no-print text-xs text-teal-600 font-medium">查看詳情 <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
                             </div>
                             <p class="text-sm text-slate-700 font-medium">下龍灣 ➔ 河內鎮國古寺（西湖景區）➔ 品嘗越共網紅咖啡 ➔ 河內機場 ➔ 高雄溫暖的家</p>
-                            <p class="text-xs text-slate-500 mt-2"><i class="fa-solid fa-house mr-1"></i> 宿：溫暖的家</p>
+                            <p class="text-xs text-slate-500 mt-1.5"><i class="fa-solid fa-house mr-1"></i> 宿：溫暖的家</p>
                         </div>
                     </div>
                 </div>
 
-                <p class="text-xs text-slate-400 mt-4 leading-relaxed">
+                <p class="text-xs text-slate-500 mt-3 leading-relaxed">
                     ※ 註：行程順序及餐食安排可能依當地實際交通、氣候或航班狀況由領隊與導遊作順暢調整，敬請見諒。
                 </p>
             </div>
@@ -329,7 +398,7 @@
         <!-- ==================== 分頁 3：每日詳細行程 ==================== -->
         <section id="sec-daily" class="hidden space-y-5">
             <!-- 天數快速選擇列 -->
-            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+            <div class="no-print flex gap-2 overflow-x-auto no-scrollbar pb-1">
                 <button onclick="selectDay(1)" id="day-btn-1" class="day-btn flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm sm:text-base bg-teal-700 text-white shadow-sm transition">Day 1 (12/13)</button>
                 <button onclick="selectDay(2)" id="day-btn-2" class="day-btn flex-shrink-0 px-4 py-2.5 rounded-xl font-semibold text-sm sm:text-base bg-white text-slate-600 border border-slate-200 hover:bg-teal-50 transition">Day 2 (12/14)</button>
                 <button onclick="selectDay(3)" id="day-btn-3" class="day-btn flex-shrink-0 px-4 py-2.5 rounded-xl font-semibold text-sm sm:text-base bg-white text-slate-600 border border-slate-200 hover:bg-teal-50 transition">Day 3 (12/15)</button>
@@ -337,25 +406,25 @@
                 <button onclick="selectDay(5)" id="day-btn-5" class="day-btn flex-shrink-0 px-4 py-2.5 rounded-xl font-semibold text-sm sm:text-base bg-white text-slate-600 border border-slate-200 hover:bg-teal-50 transition">Day 5 (12/17)</button>
             </div>
 
-            <!-- Day 1 內容 -->
-            <div id="day-content-1" class="day-card bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 space-y-5">
+            <!-- Day 1 內容 (列印第 3 頁：一頁一天，字體放大不擁擠) -->
+            <div id="day-content-1" class="day-card bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 space-y-5 print-break-before print-avoid-break print-compact-space">
                 <div class="border-b border-slate-100 pb-4">
-                    <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">2026 / 12 / 13（星期日）</span>
+                    <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">DAY 1｜2026 / 12 / 13（星期日）</span>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mt-2">高雄小港 ➔ 河內機場 ➔ 文廟國子監 ➔ 百年大教堂 ➔ 三十六古街</h3>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-4 print-compact-space">
                     <div class="bg-slate-50 p-4 rounded-2xl">
                         <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-passport mr-1.5"></i> 抵達河內與落地簽辦理</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">搭乘越南航空 VN587 抵達河內內排機場後，請先將<strong>護照與兩吋白底照片兩張</strong>交由領隊李翰雄先生統一辦理落地簽證手續。</p>
+                        <p class="text-sm text-slate-700 leading-relaxed">搭乘越南航空 VN587 抵達河內內排機場後，請先將<strong>護照與兩吋白底照片兩張</strong>交由領隊李翰雄先生統一辦理落地簽證手續。</p>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-2xl">
                         <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-landmark mr-1.5"></i> 文廟國子監 ＆ 聖若瑟百年教堂（外觀）</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed"><strong>聖若瑟教堂：</strong>建於 1886 年，是河內最古老的天主教堂，歐洲中世紀哥德式建築風格酷似巴黎聖母院，外觀古色古香，是必拍地標。</p>
+                        <p class="text-sm text-slate-700 leading-relaxed"><strong>聖若瑟教堂：</strong>建於 1886 年，是河內最古老的天主教堂，歐洲中世紀哥德式建築風格酷似巴黎聖母院，外觀古色古香，是必拍地標。</p>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-2xl">
                         <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-car-side mr-1.5"></i> 還劍湖 ＆ 電瓶車遊三十六古街</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">搭乘電瓶車穿梭於 11 世紀李王朝繁榮至今的古老商業街區，感受每條街各自專精一種傳統行業的熱鬧氛圍。</p>
+                        <p class="text-sm text-slate-700 leading-relaxed">搭乘電瓶車穿梭於 11 世紀李王朝繁榮至今的古老商業街區，感受每條街各自專精一種傳統行業的熱鬧氛圍。</p>
                     </div>
                 </div>
 
@@ -364,36 +433,36 @@
                 </div>
 
                 <!-- 餐食與住宿 -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 print-compact-gap">
                     <div class="border border-slate-200 rounded-2xl p-3.5 text-sm space-y-1.5">
                         <p class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-utensils text-teal-600 mr-1.5"></i> 今日餐食</p>
-                        <p class="text-slate-600"><strong>早餐：</strong>機上簡餐</p>
-                        <p class="text-slate-600"><strong>午餐：</strong>英豪越式風味餐（贈啤酒或可樂一瓶）</p>
-                        <p class="text-slate-600"><strong>晚餐：</strong>越式風味餐</p>
+                        <p class="text-slate-700"><strong>早餐：</strong>機上簡餐</p>
+                        <p class="text-slate-700"><strong>午餐：</strong>英豪越式風味餐（贈啤酒或可樂一瓶）</p>
+                        <p class="text-slate-700"><strong>晚餐：</strong>越式風味餐</p>
                     </div>
                     <div class="border border-slate-200 rounded-2xl p-3.5 text-sm flex flex-col justify-center bg-teal-50/40">
                         <p class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-bed text-teal-600 mr-1.5"></i> 今晚住宿</p>
                         <p class="font-bold text-teal-900 text-base">Somerset Hoa Binh Hanoi</p>
-                        <p class="text-xs text-slate-500 mt-1">河內和平盛捷酒店（連住第 1 晚）</p>
+                        <p class="text-xs text-slate-600 mt-1">河內和平盛捷酒店（連住第 1 晚）</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Day 2 內容 -->
-            <div id="day-content-2" class="day-card hidden bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 space-y-5">
+            <!-- Day 2 內容 (列印第 4 頁：一頁一天) -->
+            <div id="day-content-2" class="day-card hidden bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 space-y-5 print-break-before print-avoid-break print-compact-space">
                 <div class="border-b border-slate-100 pb-4">
-                    <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">2026 / 12 / 14（星期一）</span>
+                    <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">DAY 2｜2026 / 12 / 14（星期一）</span>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mt-2">河內 ➔ 寧平陸龍灣 ➔ 長安生態輕舟探秘 ➔ 碧洞古廟</h3>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-4 print-compact-space">
                     <div class="bg-slate-50 p-4 rounded-2xl">
                         <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-water mr-1.5"></i> 長安生態保護區・輕舟遊秘境（約 2 小時）</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">特別安排於「長安碼頭」搭乘人力小舟，穿梭在石灰岩奇峰與天然鐘乳石水洞之間，兩岸原始叢林與清澈河水交織，素有「陸上桂林」美譽，並獲聯合國世界文化與自然雙遺產殊榮。</p>
+                        <p class="text-sm text-slate-700 leading-relaxed">特別安排於「長安碼頭」搭乘人力小舟，穿梭在石灰岩奇峰與天然鐘乳石水洞之間，兩岸原始叢林與清澈河水交織，素有「陸上桂林」美譽，並獲聯合國世界文化與自然雙遺產殊榮。</p>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-2xl">
                         <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-torii-gate mr-1.5"></i> 寧平碧洞古廟（Nhat Thuong Pagoda）</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">建於西元 10 世紀，依山洞而建分為上、中、下三層，全木造建築未使用一根釘子，素有「南天第二洞」之稱，登高可俯瞰寧平田園山水。</p>
+                        <p class="text-sm text-slate-700 leading-relaxed">建於西元 10 世紀，依山洞而建分為上、中、下三層，全木造建築未使用一根釘子，素有「南天第二洞」之稱，登高可俯瞰寧平田園山水。</p>
                     </div>
                 </div>
 
@@ -404,62 +473,62 @@
                     <p>3. 碧洞古廟有古步道階梯，今日請穿著<strong>好走防滑的便鞋</strong>。</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 print-compact-gap">
                     <div class="border border-slate-200 rounded-2xl p-3.5 text-sm space-y-1.5">
                         <p class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-utensils text-teal-600 mr-1.5"></i> 今日餐食</p>
-                        <p class="text-slate-600"><strong>早餐：</strong>飯店內享用</p>
-                        <p class="text-slate-600"><strong>午餐：</strong>寧平羊肉風味餐（贈啤酒或可樂一瓶）</p>
-                        <p class="text-slate-600"><strong>晚餐：</strong>河內中越風味餐（贈啤酒或可樂一瓶）</p>
+                        <p class="text-slate-700"><strong>早餐：</strong>飯店內享用</p>
+                        <p class="text-slate-700"><strong>午餐：</strong>寧平羊肉風味餐（贈啤酒或可樂一瓶）</p>
+                        <p class="text-slate-700"><strong>晚餐：</strong>河內中越風味餐（贈啤酒或可樂一瓶）</p>
                     </div>
                     <div class="border border-slate-200 rounded-2xl p-3.5 text-sm flex flex-col justify-center bg-teal-50/40">
                         <p class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-bed text-teal-600 mr-1.5"></i> 今晚住宿</p>
                         <p class="font-bold text-teal-900 text-base">Somerset Hoa Binh Hanoi</p>
-                        <p class="text-xs text-slate-500 mt-1">河內和平盛捷酒店（連住第 2 晚）</p>
+                        <p class="text-xs text-slate-600 mt-1">河內和平盛捷酒店（連住第 2 晚）</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Day 3 內容 -->
-            <div id="day-content-3" class="day-card hidden bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 space-y-5">
+            <!-- Day 3 內容 (列印第 5 頁：一頁一天) -->
+            <div id="day-content-3" class="day-card hidden bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 space-y-5 print-break-before print-avoid-break print-compact-space">
                 <div class="border-b border-slate-100 pb-4">
-                    <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">2026 / 12 / 15（星期二）</span>
+                    <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">DAY 3｜2026 / 12 / 15（星期二）</span>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mt-2">河內市區古蹟巡禮 ➔ 網紅雞蛋咖啡 ➔ 下龍灣水上木偶戲</h3>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-4 print-compact-space">
                     <div class="bg-slate-50 p-4 rounded-2xl">
                         <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-building-columns mr-1.5"></i> 巴亭廣場・總督府・一柱廟・玉山祠（不入內）</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">走訪越南獨立宣言發源地「巴亭廣場」、法式殖民建築「總督府」、建於 1049 年立於蓮花池中的河內地標「一柱廟」，以及還劍湖畔傳說神龜還劍的「玉山祠」。</p>
+                        <p class="text-sm text-slate-700 leading-relaxed">走訪越南獨立宣言發源地「巴亭廣場」、法式殖民建築「總督府」、建於 1049 年立於蓮花池中的河內地標「一柱廟」，以及還劍湖畔傳說神龜還劍的「玉山祠」。</p>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-2xl">
                         <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-mug-hot mr-1.5"></i> 品嘗河內網紅「雞蛋咖啡」</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">體驗河內最具代表性的特色飲品，綿密香甜的打發蛋黃奶泡搭配濃郁越式咖啡，口感如提拉米蘇般滑順。</p>
+                        <p class="text-sm text-slate-700 leading-relaxed">體驗河內最具代表性的特色飲品，綿密香甜的打發蛋黃奶泡搭配濃郁越式咖啡，口感如提拉米蘇般滑順。</p>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-2xl">
                         <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-masks-theater mr-1.5"></i> 越南國寶級「水上木偶戲」</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">驅車前往世界遺產下龍灣，欣賞藝師躲在布幕後於水池中靈活操控木偶、搭配傳統民樂演出的千年國寶技藝。</p>
+                        <p class="text-sm text-slate-700 leading-relaxed">驅車前往世界遺產下龍灣，欣賞藝師躲在布幕後於水池中靈活操控木偶、搭配傳統民樂演出的千年國寶技藝。</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 print-compact-gap">
                     <div class="border border-slate-200 rounded-2xl p-3.5 text-sm space-y-1.5">
                         <p class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-utensils text-teal-600 mr-1.5"></i> 今日餐食</p>
-                        <p class="text-slate-600"><strong>早餐：</strong>飯店內享用</p>
-                        <p class="text-slate-600"><strong>午餐：</strong>米其林必比登推介～1946 Cửa Bắc 餐廳（贈啤酒或可樂一瓶）</p>
-                        <p class="text-slate-600"><strong>晚餐：</strong>漁夫館特色風味餐（贈啤酒或可樂一瓶）</p>
+                        <p class="text-slate-700"><strong>早餐：</strong>飯店內享用</p>
+                        <p class="text-slate-700"><strong>午餐：</strong>米其林必比登推介～1946 Cửa Bắc 餐廳（贈啤酒或可樂一瓶）</p>
+                        <p class="text-slate-700"><strong>晚餐：</strong>漁夫館特色風味餐（贈啤酒或可樂一瓶）</p>
                     </div>
                     <div class="border border-slate-200 rounded-2xl p-3.5 text-sm flex flex-col justify-center bg-blue-50/50">
                         <p class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-bed text-blue-600 mr-1.5"></i> 今晚住宿</p>
                         <p class="font-bold text-blue-900 text-base">The Watson Premium Halong Hotel</p>
-                        <p class="text-xs text-slate-500 mt-1">下龍灣華生高級酒店（連住第 1 晚）</p>
+                        <p class="text-xs text-slate-600 mt-1">下龍灣華生高級酒店（連住第 1 晚）</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Day 4 內容 -->
-            <div id="day-content-4" class="day-card hidden bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 space-y-5">
+            <!-- Day 4 內容 (列印第 6 頁：一頁一天) -->
+            <div id="day-content-4" class="day-card hidden bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 space-y-5 print-break-before print-avoid-break print-compact-space">
                 <div class="border-b border-slate-100 pb-4">
-                    <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-md">2026 / 12 / 16（星期三）★ 行程重頭戲</span>
+                    <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-md">DAY 4｜2026 / 12 / 16（星期三）★ 行程重頭戲</span>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mt-2">五星級【亞特圖斯總統號郵輪】出海 ➔ 女皇雙層纜車＋日本花園</h3>
                 </div>
 
@@ -482,135 +551,188 @@
 
                 <div class="bg-slate-50 p-4 rounded-2xl">
                     <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-cable-car mr-1.5"></i> 女皇雙層纜車 ＆ 網紅日本花園</h4>
-                    <p class="text-sm text-slate-600 leading-relaxed">搭乘榮獲金氏世界紀錄全球最大、可容納 230 人的雙層跨海纜車，從高空俯瞰壯麗的下龍灣海景與跨海大橋，並漫步於丘陵上的日式庭園。</p>
+                    <p class="text-sm text-slate-700 leading-relaxed">搭乘榮獲金氏世界紀錄全球最大、可容納 230 人的雙層跨海纜車，從高空俯瞰壯麗的下龍灣海景與跨海大橋，並漫步於丘陵上的日式庭園。</p>
                 </div>
 
                 <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-xs sm:text-sm text-amber-900">
                     <strong><i class="fa-solid fa-shirt text-amber-600 mr-1"></i> 衣著提醒：</strong>12 月海上及甲板風大較涼，請務必隨身攜帶<strong>薄外套／防風外套</strong>；登島與進洞穴請穿防滑好走的鞋子。
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 print-compact-gap">
                     <div class="border border-slate-200 rounded-2xl p-3.5 text-sm space-y-1.5">
                         <p class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-utensils text-teal-600 mr-1.5"></i> 今日餐食</p>
-                        <p class="text-slate-600"><strong>早餐：</strong>飯店內享用</p>
-                        <p class="text-slate-600"><strong>午餐：</strong>亞特圖斯總統號 海陸自助百匯＋海鮮盤（四人一組）</p>
-                        <p class="text-slate-600"><strong>晚餐：</strong>生猛尚青～九層蒸氣海陸宴（贈啤酒或軟飲一瓶）</p>
+                        <p class="text-slate-700"><strong>早餐：</strong>飯店內享用</p>
+                        <p class="text-slate-700"><strong>午餐：</strong>亞特圖斯總統號 海陸自助百匯＋海鮮盤（四人一組）</p>
+                        <p class="text-slate-700"><strong>晚餐：</strong>生猛尚青～九層蒸氣海陸宴（贈啤酒或軟飲一瓶）</p>
                     </div>
                     <div class="border border-slate-200 rounded-2xl p-3.5 text-sm flex flex-col justify-center bg-blue-50/50">
                         <p class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-bed text-blue-600 mr-1.5"></i> 今晚住宿</p>
                         <p class="font-bold text-blue-900 text-base">The Watson Premium Halong Hotel</p>
-                        <p class="text-xs text-slate-500 mt-1">下龍灣華生高級酒店（連住第 2 晚）</p>
+                        <p class="text-xs text-slate-600 mt-1">下龍灣華生高級酒店（連住第 2 晚）</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Day 5 內容 -->
-            <div id="day-content-5" class="day-card hidden bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 space-y-5">
+            <!-- Day 5 內容 (列印第 7 頁：一頁一天) -->
+            <div id="day-content-5" class="day-card hidden bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 space-y-5 print-break-before print-avoid-break print-compact-space">
                 <div class="border-b border-slate-100 pb-4">
-                    <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">2026 / 12 / 17（星期四）</span>
+                    <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">DAY 5｜2026 / 12 / 17（星期四）</span>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mt-2">下龍灣 ➔ 河內鎮國古寺（西湖）➔ 越共網紅咖啡 ➔ 返抵高雄</h3>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-4 print-compact-space">
                     <div class="bg-slate-50 p-4 rounded-2xl">
                         <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-dharmachakra mr-1.5"></i> 河內鎮國古寺 ＆ 西湖景區</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">建於公元六世紀，是河內最古老的佛寺。寺內供奉臥佛、千手觀音與彌勒佛，並擁有一株 1959 年由印度總統致贈、源自釋迦牟尼得道處的珍貴菩提樹，坐落於風光明媚的西湖畔。</p>
+                        <p class="text-sm text-slate-700 leading-relaxed">建於公元六世紀，是河內最古老的佛寺。寺內供奉臥佛、千手觀音與彌勒佛，並擁有一株 1959 年由印度總統致贈、源自釋迦牟尼得道處的珍貴菩提樹，坐落於風光明媚的西湖畔。</p>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-2xl">
                         <h4 class="font-bold text-teal-800 mb-1"><i class="fa-solid fa-mug-saucer mr-1.5"></i> 越共網紅咖啡（Cộng Cà Phê）</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">品嘗風靡全越南的復古軍事風連鎖咖啡廳，推薦必點招牌「椰子咖啡冰沙」，享受悠閒午後時光後前往河內機場搭機返台。</p>
+                        <p class="text-sm text-slate-700 leading-relaxed">品嘗風靡全越南的復古軍事風連鎖咖啡廳，推薦必點招牌「椰子咖啡冰沙」，享受悠閒午後時光後前往河內機場搭機返台。</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 print-compact-gap">
                     <div class="border border-slate-200 rounded-2xl p-3.5 text-sm space-y-1.5">
                         <p class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-utensils text-teal-600 mr-1.5"></i> 今日餐食</p>
-                        <p class="text-slate-600"><strong>早餐：</strong>飯店內享用</p>
-                        <p class="text-slate-600"><strong>午餐：</strong>特色 PP 蝦河粉＋越式春捲特色餐（贈啤酒或可樂一瓶）</p>
-                        <p class="text-slate-600"><strong>晚餐：</strong>機上簡餐（VN586 18:20 起飛 / 21:40 抵達高雄）</p>
+                        <p class="text-slate-700"><strong>早餐：</strong>飯店內享用</p>
+                        <p class="text-slate-700"><strong>午餐：</strong>特色 PP 蝦河粉＋越式春捲特色餐（贈啤酒或可樂一瓶）</p>
+                        <p class="text-slate-700"><strong>晚餐：</strong>機上簡餐（VN586 18:20 起飛 / 21:40 抵達高雄）</p>
                     </div>
                     <div class="border border-slate-200 rounded-2xl p-3.5 text-sm flex flex-col justify-center bg-amber-50/60">
                         <p class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-house-chimney text-amber-600 mr-1.5"></i> 今晚住宿</p>
                         <p class="font-bold text-amber-900 text-base">溫暖的家</p>
-                        <p class="text-xs text-slate-500 mt-1">帶著滿滿雙龍灣回憶平安返家</p>
+                        <p class="text-xs text-slate-600 mt-1">帶著滿滿雙龍灣回憶平安返家</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- ==================== 分頁 4：注意事項與打包清單 ==================== -->
-        <section id="sec-tips" class="hidden space-y-6">
+        <section id="sec-tips" class="hidden space-y-6 print-break-before print-compact-space">
 
-            <!-- 互動小工具：行前必帶檢查表 (可打勾儲存) -->
-            <div class="bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100">
-                <div class="flex justify-between items-center mb-4">
+            <!-- 互動小工具：行前必帶檢查表 (列印第 8 頁) -->
+            <div class="bg-white rounded-3xl p-5 sm:p-6 card-shadow border border-slate-100 print-avoid-break">
+                <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
                     <h2 class="text-xl font-bold text-teal-800 flex items-center gap-2">
                         <span class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center"><i class="fa-solid fa-list-check"></i></span>
                         出發前個人檢查表
                     </h2>
-                    <span id="check-progress" class="text-xs font-bold bg-teal-100 text-teal-800 px-3 py-1 rounded-full">0 / 7 已確認</span>
+                    <div class="no-print flex items-center gap-2">
+                        <span id="check-progress" class="text-xs font-bold bg-teal-100 text-teal-800 px-3 py-1 rounded-full">0 / 7 已確認</span>
+                        <button onclick="resetChecklist()" class="text-xs text-slate-500 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 px-2.5 py-1 rounded-full transition" title="清除所有勾選">
+                            <i class="fa-solid fa-rotate-right"></i> 重置
+                        </button>
+                    </div>
                 </div>
 
-                <div class="space-y-2.5" id="checklist-container">
+                <div class="space-y-3" id="checklist-container">
                     <!-- 由 JS 動態生成可勾選項目 -->
                 </div>
             </div>
 
             <!-- 重要規定與貼心叮嚀卡片群 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- 簽證與照片 -->
-                <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100">
-                    <h3 class="font-bold text-slate-800 text-base mb-2 flex items-center gap-2">
-                        <span class="text-xl">📕</span> 簽證與證件照片提醒
+            <div class="grid grid-cols-1 gap-5 print-compact-gap">
+                <!-- 簽證與照片 (列印第 9 頁) -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 card-shadow border border-slate-100 print-break-before print-avoid-break">
+                    <h3 class="font-bold text-slate-800 text-lg sm:text-xl mb-3 flex items-center gap-2.5">
+                        <span class="text-2xl">📕</span> 簽證與證件照片提醒
                     </h3>
-                    <ul class="text-sm text-slate-600 space-y-2 list-disc list-inside">
+                    <ul class="text-base text-slate-700 space-y-2.5 list-disc list-inside leading-relaxed">
                         <li><strong class="text-rose-600">開票後若更換護照，請務必主動告知</strong>，以免入境資料不符無法登機（重辦費用需自理）。</li>
                         <li>辦理落地簽證，請務必攜帶<strong>兩吋彩色白底照片 2 張</strong>（隨身攜帶勿託運）。</li>
                         <li>建議入境前 72 小時內填寫越南線上入境申報，並將 <strong>QR Code 截圖及列印紙本備用</strong>。</li>
                     </ul>
                 </div>
 
-                <!-- 禁帶物品 -->
-                <div class="bg-rose-50 rounded-2xl p-5 border border-rose-200">
-                    <h3 class="font-bold text-rose-900 text-base mb-2 flex items-center gap-2">
-                        <span class="text-xl">🚭</span> 嚴格禁令：電子煙／加熱菸
+                <!-- 禁帶物品 (列印第 9 頁) -->
+                <div class="bg-rose-50 rounded-3xl p-6 sm:p-7 border border-rose-200 print-avoid-break">
+                    <h3 class="font-bold text-rose-900 text-lg sm:text-xl mb-3 flex items-center gap-2.5">
+                        <span class="text-2xl">🚭</span> 嚴格禁令：電子煙／加熱菸
                     </h3>
-                    <p class="text-sm text-rose-800 leading-relaxed">
+                    <p class="text-base text-rose-900 leading-relaxed">
                         自 2025/1/1 起，越南政府已正式將<strong>電子煙及加熱菸列入毒品管制</strong>！嚴禁攜帶電子煙主機、煙彈及相關配件入境越南，違者將面臨高額罰款或刑事責任，請務必留意！
                     </p>
                 </div>
 
-                <!-- 行李規定 -->
-                <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100">
-                    <h3 class="font-bold text-slate-800 text-base mb-2 flex items-center gap-2">
-                        <span class="text-xl">🧳</span> 託運與手提行李規定
+                <!-- 行李規定 (列印第 9 頁) -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 card-shadow border border-slate-100 print-avoid-break">
+                    <h3 class="font-bold text-slate-800 text-lg sm:text-xl mb-3 flex items-center gap-2.5">
+                        <span class="text-2xl">🧳</span> 託運與手提行李規定
                     </h3>
-                    <ul class="text-sm text-slate-600 space-y-2 list-disc list-inside">
-                        <li><strong>託運行李：</strong>每人限 1 件，<strong>20 公斤以內</strong>。液體類、噴霧、尖銳物品請務必託運。</li>
-                        <li><strong>手提行李：</strong>每人限 1 件，<strong>7 公斤以內</strong>。</li>
-                        <li><strong class="text-amber-700">行動電源、手機/相機鋰電池、打火機</strong>不可託運，請務必放隨身行李。</li>
+                    <ul class="text-base text-slate-700 space-y-2.5 list-disc list-inside leading-relaxed">
+                        <li><strong>託運行李（限 1 件／23 公斤以內）：</strong>超過 100ml 之液體、乳液、噴霧罐、剪刀、指甲刀與摺疊傘等，請務必放入託運行李。</li>
+                        <li><strong>手提隨身行李（限 1 件／7 公斤以內）：</strong>隨身液體、凝膠及噴霧類物品，單瓶容器不得超過 <strong>100ml</strong>，且須裝入 1 公升透明夾鏈袋內。</li>
+                        <li><strong class="text-amber-700">務必隨身攜帶（嚴禁託運）：</strong>行動電源（需有清晰容量標示，不可超過 100Wh）、手機／相機備用鋰電池、傳統打火機（每人限隨身攜帶 1 個，防風／藍焰打火機完全禁止）。</li>
+                        <li><strong>回程入境台灣提醒：</strong>嚴禁攜帶任何肉類製品（含火腿腸、肉鬆蛋捲、肉乾、泡麵含肉塊調理包等）及新鮮蔬果回台，違者重罰新台幣 20 萬元起。</li>
                     </ul>
                 </div>
 
-                <!-- 天氣電壓與乘車 -->
-                <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100">
-                    <h3 class="font-bold text-slate-800 text-base mb-2 flex items-center gap-2">
-                        <span class="text-xl">🔌</span> 電壓、衣著與乘車提醒
+                <!-- 天氣電壓與乘車 (列印第 10 頁) -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 card-shadow border border-slate-100 print-break-before print-avoid-break">
+                    <h3 class="font-bold text-slate-800 text-lg sm:text-xl mb-3 flex items-center gap-2.5">
+                        <span class="text-2xl">🔌</span> 電壓、衣著與乘車提醒
                     </h3>
-                    <ul class="text-sm text-slate-600 space-y-2 list-disc list-inside">
+                    <ul class="text-base text-slate-700 space-y-2.5 list-disc list-inside leading-relaxed">
                         <li><strong>電壓插座：</strong>越南電壓為 <strong>220V</strong>（台灣為 110V），手機相機充電器通常支援國際電壓，吹風機等高功率電器請特別留意；建議自備萬用轉接頭。</li>
-                        <li><strong>天氣衣著：</strong>12 月北越涼爽舒適但早晚溫差大、海上風大，請攜帶<strong>薄外套/防風外套</strong>與防曬用品。</li>
+                        <li><strong>天氣衣著：</strong>12 月北越涼爽舒適但早晚溫差大、海上風大，請攜帶<strong>薄外套／防風外套</strong>與防曬用品。</li>
                         <li><strong>乘車提醒：</strong>往返寧平與下龍灣車程較長，易暈車者請自備<strong>暈車藥</strong>。</li>
                     </ul>
+                </div>
+
+                <!-- 食物與飲水方面 (列印第 10 頁) -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 card-shadow border border-slate-100 print-avoid-break">
+                    <h3 class="font-bold text-slate-800 text-lg sm:text-xl mb-3 flex items-center gap-2.5">
+                        <span class="text-2xl">🍜</span> 食物與飲水方面
+                    </h3>
+                    <ul class="text-base text-slate-700 space-y-2.5 list-disc list-inside leading-relaxed">
+                        <li><strong>品嘗當地風味：</strong>行程安排體驗越南當地特殊風味菜色，由於個人口味均有不同，請以嚐鮮的心情來體驗當地的風味餐。</li>
+                        <li><strong>飲水安全：</strong>當地自來水<strong>不宜生飲</strong>（亦請避免直接飲用路邊來路不明的冰塊飲品），請飲用飯店煮沸過的水或購買瓶裝礦泉水。</li>
+                    </ul>
+                </div>
+
+                <!-- 海關免稅額度規定 (列印第 11 頁) -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 card-shadow border border-slate-100 print-break-before print-avoid-break">
+                    <h3 class="font-bold text-slate-800 text-lg sm:text-xl mb-3 flex items-center gap-2.5">
+                        <span class="text-2xl">🛃</span> 海關免稅菸酒規定
+                    </h3>
+                    <ul class="text-base text-slate-700 space-y-2.5 list-disc list-inside leading-relaxed">
+                        <li><strong>入境越南免稅額度：</strong>不超過 <strong>1.5 公升</strong>之 20 度以上酒類，或 <strong>2 公升</strong>之 20 度以下酒類，或 <strong>3 公升</strong>之含酒精飲料／啤酒；香菸不超過 <strong>200 支</strong>（或雪茄 25 支、菸絲 250 公克）。<strong class="text-rose-600">越南全面禁止電子煙！</strong></li>
+                        <li><strong>入境台灣免稅額度（年滿 20 歲）：</strong>酒類總量不超過 <strong>1,000 毫升（1 公升）</strong>；捲菸不超過 <strong>200 支</strong>（1 條），或雪茄不超過 25 支，或菸絲不超過 1 磅。</li>
+                    </ul>
+                </div>
+
+                <!-- 推薦自費項目表 (接續第 11 頁) -->
+                <div class="bg-white rounded-3xl p-6 sm:p-7 card-shadow border border-slate-100 print-avoid-break">
+                    <h3 class="font-bold text-slate-800 text-lg sm:text-xl mb-3 flex items-center gap-2.5">
+                        <span class="text-2xl">💆‍♀️</span> 推薦自費項目參考（自由參加不強迫）
+                    </h3>
+                    <div class="divide-y divide-slate-100 border border-slate-200 rounded-2xl overflow-hidden text-base">
+                        <div class="flex flex-wrap justify-between items-center gap-2 p-3.5 bg-slate-50/70">
+                            <span class="font-medium text-slate-800">河內 90 分鐘－腳底 + 全身按摩（熱石按摩）</span>
+                            <span class="font-bold text-teal-700">NT$ 1,200</span>
+                        </div>
+                        <div class="flex flex-wrap justify-between items-center gap-2 p-3.5">
+                            <span class="font-medium text-slate-800">下龍灣 90 分鐘－腳底 + 全身按摩（熱石按摩）</span>
+                            <span class="font-bold text-teal-700">NT$ 1,000</span>
+                        </div>
+                        <div class="flex flex-wrap justify-between items-center gap-2 p-3.5 bg-slate-50/70">
+                            <span class="font-medium text-slate-800">下龍灣－快艇巡曳 + 小舟遊覽天井洞</span>
+                            <span class="font-bold text-teal-700">NT$ 1,000</span>
+                        </div>
+                        <div class="flex flex-wrap justify-between items-center gap-2 p-3.5">
+                            <span class="font-medium text-slate-800">越式洗頭 90 分鐘</span>
+                            <span class="font-bold text-teal-700">NT$ 1,000</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- ==================== 分頁 5：匯率換算與小費指南 ==================== -->
-        <section id="sec-currency" class="hidden space-y-6">
+        <section id="sec-currency" class="hidden space-y-6 print-compact-space">
 
-            <!-- 互動小工具：越南盾即時匯率換算器 -->
-            <div class="bg-gradient-to-br from-teal-800 to-teal-950 text-white rounded-3xl p-5 sm:p-6 shadow-lg">
+            <!-- 互動小工具：越南盾即時匯率換算器 (列印時自動隱藏此計算機) -->
+            <div id="currency-calculator-box" class="no-print bg-gradient-to-br from-teal-800 to-teal-950 text-white rounded-3xl p-5 sm:p-6 shadow-lg">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-amber-400"></i> 越南盾（VND）快速換算小幫手
@@ -661,14 +783,14 @@
                 </div>
             </div>
 
-            <!-- 換匯與小費說明卡片 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- 換匯與小費說明卡片 (接續列印第 11 頁) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 print-compact-gap">
                 <!-- 換匯與現金 -->
-                <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100">
+                <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100 print-avoid-break">
                     <h3 class="font-bold text-slate-800 text-base mb-2 flex items-center gap-2">
                         <span class="text-xl">💵</span> 攜帶現金與換匯技巧
                     </h3>
-                    <ul class="text-sm text-slate-600 space-y-2 list-disc list-inside">
+                    <ul class="text-sm text-slate-700 space-y-2 list-disc list-inside">
                         <li>台灣出境現金請勿超過<strong>等值台幣 10 萬元</strong>（越南入境外幣超過 5,000 美金需申報）。</li>
                         <li>可直接向導遊以<strong>台幣現金</strong>兌換越南盾（匯率約 1 : 750～800）。</li>
                         <li>導遊通常不將剩餘越南盾換回台幣，建議<strong>用多少換多少</strong>，不夠再小額多次向導遊兌換。</li>
@@ -677,17 +799,64 @@
                 </div>
 
                 <!-- 小費參考 -->
-                <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100">
+                <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100 print-avoid-break">
                     <h3 class="font-bold text-slate-800 text-base mb-2 flex items-center gap-2">
                         <span class="text-xl">🙏</span> 當地小費參考標準
                     </h3>
-                    <ul class="text-sm text-slate-600 space-y-2">
-                        <li class="flex justify-between border-b border-slate-100 pb-1.5"><span>領隊 / 導遊 / 司機小費</span><strong class="text-teal-700">NT$ 300 / 天（共 1,500）</strong></li>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li class="flex justify-between border-b border-slate-100 pb-1.5"><span>領隊 / 導遊 / 司機小費</span><strong class="text-emerald-700">本行程已包含（免再支付）</strong></li>
                         <li class="flex justify-between border-b border-slate-100 pb-1.5"><span>長安輕舟搭船小費</span><strong class="text-slate-800">20,000 越南盾 / 位</strong></li>
                         <li class="flex justify-between border-b border-slate-100 pb-1.5"><span>古街電瓶車小費</span><strong class="text-slate-800">20,000 越南盾 / 位</strong></li>
                         <li class="flex justify-between border-b border-slate-100 pb-1.5"><span>飯店行李小費</span><strong class="text-slate-800">20,000 越南盾 / 件</strong></li>
                         <li class="flex justify-between"><span>飯店床頭小費</span><strong class="text-slate-800">20,000 越南盾 / 間 / 晚</strong></li>
                     </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 列印專用第 12 頁：旅遊隨手筆記與緊急備忘（湊足 12 頁 = 4 的倍數） ==================== -->
+        <section class="hidden print-only print-break-before">
+            <div class="bg-white rounded-3xl p-6 card-shadow border border-slate-200 flex flex-col justify-between" style="min-height: 255mm;">
+                <div>
+                    <h2 class="text-xl font-bold text-teal-800 flex items-center gap-2 mb-4">
+                        <span class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center"><i class="fa-solid fa-pen-to-square"></i></span>
+                        家族旅遊備忘錄與隨手筆記
+                    </h2>
+
+                    <!-- 房號與緊急聯絡紀錄框 -->
+                    <div class="grid grid-cols-2 gap-4 mb-5">
+                        <div class="border border-slate-200 rounded-2xl p-4 bg-slate-50/60">
+                            <p class="font-bold text-teal-900 mb-2">🏨 家族住宿房號紀錄</p>
+                            <p class="text-slate-700 mb-2.5">河內飯店（Day 1-2）：____________ 號房</p>
+                            <p class="text-slate-700">下龍灣飯店（Day 3-4）：__________ 號房</p>
+                        </div>
+                        <div class="border border-slate-200 rounded-2xl p-4 bg-slate-50/60">
+                            <p class="font-bold text-teal-900 mb-2">🆘 駐外急難救助聯絡</p>
+                            <p class="text-slate-700 mb-1">駐越南代表處（河內）：+84-24-3833-5501</p>
+                            <p class="text-slate-700">急難救助專線：+84-913-219-986</p>
+                        </div>
+                    </div>
+
+                    <!-- 手寫筆記橫線 -->
+                    <p class="font-bold text-slate-700 mb-2">📝 購物清單 / 集合時間筆記：</p>
+                    <div class="space-y-7 pt-2">
+                        <div class="border-b border-dashed border-slate-300 h-5"></div>
+                        <div class="border-b border-dashed border-slate-300 h-5"></div>
+                        <div class="border-b border-dashed border-slate-300 h-5"></div>
+                        <div class="border-b border-dashed border-slate-300 h-5"></div>
+                        <div class="border-b border-dashed border-slate-300 h-5"></div>
+                        <div class="border-b border-dashed border-slate-300 h-5"></div>
+                        <div class="border-b border-dashed border-slate-300 h-5"></div>
+                        <div class="border-b border-dashed border-slate-300 h-5"></div>
+                        <div class="border-b border-dashed border-slate-300 h-5"></div>
+                        <div class="border-b border-dashed border-slate-300 h-5"></div>
+                    </div>
+                </div>
+
+                <!-- 封底祝福語 -->
+                <div class="hero-gradient text-white rounded-2xl p-5 text-center mt-6">
+                    <p class="font-bold text-lg mb-1">祝 素娟家族全體貴賓 旅途平安愉快！</p>
+                    <p class="text-teal-100">山富旅遊｜團號：HAN05261213Q｜領隊 李翰雄 0936-044888</p>
                 </div>
             </div>
         </section>
@@ -721,7 +890,7 @@
     </nav>
 
     <!-- 底部提示 Toast (取代 alert) -->
-    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-sm px-5 py-2.5 rounded-full shadow-xl opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+    <div id="toast" class="no-print fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-sm px-5 py-2.5 rounded-full shadow-xl opacity-0 pointer-events-none transition-opacity duration-300 z-50">
         已複製到剪貼簿！
     </div>
 
@@ -857,12 +1026,12 @@
             calcCurrency('vnd');
         }
 
-        // 5. 出發前個人檢查表 (支援瀏覽器 LocalStorage 記憶勾選狀態)
+        // 5. 出發前個人檢查表 (支援瀏覽器 LocalStorage 記憶勾選狀態與一鍵重置)
         const checklistItems = [
             { id: 'chk1', text: '護照正本（效期需六個月以上，且與報名資料一致）' },
             { id: 'chk2', text: '兩吋彩色白底大頭照 2 張（辦理落地簽證用，放隨身包包）' },
             { id: 'chk3', text: '越南線上入境申報 QR Code（手機截圖＋列印紙本備用）' },
-            { id: 'chk4', text: '台幣現金（給導遊換越南盾＋支付團費小費 NT$1,500）' },
+            { id: 'chk4', text: '台幣現金（給導遊換越南盾與當地零星小費，本團已含領隊導遊小費）' },
             { id: 'chk5', text: '個人牙刷、牙膏、梳子、拖鞋（越南飯店環保不主動提供）' },
             { id: 'chk6', text: '薄外套／防風外套、好走防滑便鞋、暈車藥與個人常備藥' },
             { id: 'chk7', text: '確認行李無電子煙／加熱菸，行動電源與鋰電池放隨身行李' }
@@ -880,10 +1049,10 @@
             checklistItems.forEach(item => {
                 const isChecked = !!savedState[item.id];
                 const label = document.createElement('label');
-                label.className = `flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition ${isChecked ? 'bg-teal-50/70 border-teal-200 text-slate-400 line-through' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'}`;
+                label.className = `flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition ${isChecked ? 'bg-teal-50/70 border-teal-200 text-slate-400 line-through' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'}`;
                 label.innerHTML = `
                     <input type="checkbox" id="${item.id}" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${item.id}')" class="mt-1 w-5 h-5 accent-teal-700 rounded cursor-pointer flex-shrink-0">
-                    <span class="text-sm sm:text-base font-medium select-none leading-relaxed">${item.text}</span>
+                    <span class="text-base font-medium select-none leading-relaxed">${item.text}</span>
                 `;
                 container.appendChild(label);
             });
@@ -902,6 +1071,14 @@
             initChecklist();
         }
 
+        function resetChecklist() {
+            try {
+                localStorage.removeItem('vn_trip_checklist');
+            } catch (e) {}
+            initChecklist();
+            showToast('已清除所有檢查表勾選狀態');
+        }
+
         function updateProgress() {
             const total = checklistItems.length;
             let checkedCount = 0;
@@ -913,6 +1090,11 @@
             if (progressEl) {
                 progressEl.textContent = `${checkedCount} / ${total} 已確認`;
             }
+        }
+
+        // 6. 列印手冊功能（自動呼叫瀏覽器列印，並套用 12 頁 16px 大字小冊子排版）
+        function printHandout() {
+            window.print();
         }
 
         // 頁面載入後初始化
